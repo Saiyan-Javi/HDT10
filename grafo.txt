@@ -1,0 +1,15 @@
+Madrid,Barcelona,620,630,650,660
+Madrid,Valencia,350,360,380,390
+Madrid,Sevilla,520,530,550,560
+Madrid,Bilbao,410,420,440,450
+Madrid,Malaga,500,510,530,540
+Barcelona,Valencia,310,320,340,350
+Barcelona,Sevilla,900,910,930,940
+Barcelona,Bilbao,600,610,630,640
+Barcelona,Malaga,700,710,730,740
+Valencia,Sevilla,600,610,630,640
+Valencia,Bilbao,400,410,430,440
+Valencia,Malaga,450,460,480,490
+Sevilla,Bilbao,850,860,880,890
+Sevilla,Malaga,220,230,250,260
+Bilbao,Malaga,700,710,730,740
