@@ -21,28 +21,46 @@ public class main {
             while ((linea = br.readLine()) != null) {
                 lineas.add(linea);
             }
-
+    
             int numVertices = lineas.size();
             grafo = new int[numVertices][numVertices];
-
+    
+            // Crear un mapa para almacenar el índice de cada ciudad
+            Map<String, Integer> indiceCiudad = new HashMap<>();
+    
             for (int i = 0; i < numVertices; i++) {
                 Arrays.fill(grafo[i], INF);
                 String[] partes = lineas.get(i).split(",");
+                String ciudadOrigen = partes[0];
+                String ciudadDestino = partes[1];
                 int tiempoNormal = Integer.parseInt(partes[2]);
                 int tiempoLluvia = Integer.parseInt(partes[3]);
                 int tiempoNieve = Integer.parseInt(partes[4]);
                 int tiempoTormenta = Integer.parseInt(partes[5]);
-                grafo[i][i] = 0; // Distancia de un vértice a sí mismo es 0
-                grafo[i][obtenerIndiceCiudad(partes[1], lineas)] = tiempoNormal;
-                grafo[i][obtenerIndiceCiudad(partes[1], lineas)] = tiempoLluvia;
-                grafo[i][obtenerIndiceCiudad(partes[1], lineas)] = tiempoNieve;
-                grafo[i][obtenerIndiceCiudad(partes[1], lineas)] = tiempoTormenta;
+    
+                // Verificar si ya se ha asignado un índice a la ciudad de origen
+                if (!indiceCiudad.containsKey(ciudadOrigen)) {
+                    indiceCiudad.put(ciudadOrigen, indiceCiudad.size());
+                }
+                int indiceOrigen = indiceCiudad.get(ciudadOrigen);
+    
+                // Verificar si ya se ha asignado un índice a la ciudad de destino
+                if (!indiceCiudad.containsKey(ciudadDestino)) {
+                    indiceCiudad.put(ciudadDestino, indiceCiudad.size());
+                }
+                int indiceDestino = indiceCiudad.get(ciudadDestino);
+    
+                grafo[indiceOrigen][indiceDestino] = tiempoNormal;
+                grafo[indiceOrigen][indiceDestino] = tiempoLluvia;
+                grafo[indiceOrigen][indiceDestino] = tiempoNieve;
+                grafo[indiceOrigen][indiceDestino] = tiempoTormenta;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return grafo;
     }
+    
 
     private static int obtenerNumeroVertices(int[][] grafo) {
         return grafo.length;
