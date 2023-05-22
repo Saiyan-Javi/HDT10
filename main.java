@@ -76,6 +76,13 @@ public class Main {
                 grafo[indiceOrigen][indiceDestino] = tiempoNieve;
                 grafo[indiceOrigen][indiceDestino] = tiempoTormenta;
             }
+            System.out.println("Contenido de la matriz grafo:");
+        for (int i = 0; i < grafo.length; i++) {
+            for (int j = 0; j < grafo.length; j++) {
+                System.out.print(grafo[i][j] + " ");
+            }
+            System.out.println();
+        }
         } catch (IOException e) {
             e.printStackTrace();
         }
