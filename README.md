@@ -2,3 +2,4 @@
 
 
 Javier Alejandro Ovalle Chiquín 22103
+Jose Ángel Morales Farfan 22689
