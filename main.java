@@ -2,12 +2,17 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.Scanner;
 
-public class Main {
+public class main {
     private static final int INF = 9999999; // Valor infinito para representar la ausencia de conexión
 
     public static void main(String[] args) {
-        int[][] grafo = leerGrafoDesdeArchivo("grafo.txt");
+        Scanner teclado = new Scanner(System.in);
+        System.out.println("Como esta el clima hoy? 1. Normal 2. Lluevioso 3. Nevado 4. Tormentoso");
+        int a = teclado.nextInt();
+        teclado.nextLine();
+        int[][] grafo = leerGrafoDesdeArchivo("grafo.txt", a);
         int numVertices = obtenerNumeroVertices(grafo);
         int[][] distancias = aplicarAlgoritmoFloydWarshall(grafo, numVertices);
         // imprimirDistancias(distancias, numVertices);
@@ -37,8 +42,13 @@ public class Main {
         }
     }
 
-    private static int[][] leerGrafoDesdeArchivo(String nombreArchivo) {
+    private static int[][] leerGrafoDesdeArchivo(String nombreArchivo, int a) {
         int[][] grafo = null;
+        int[][] grafonormal = null;
+        int[][] grafolluvia = null;
+        int[][] grafonieve = null;
+        int[][] grafotormenta = null;
+        int inf = 9999999;
         try (BufferedReader br = new BufferedReader(new FileReader(nombreArchivo))) {
             List<String> lineas = new ArrayList<>();
             String linea;
@@ -46,45 +56,115 @@ public class Main {
                 lineas.add(linea);
             }
 
-            int numVertices = lineas.size();
-            grafo = new int[numVertices][numVertices];
+            List<String> lineas2 = new ArrayList<>();
 
-            Map<String, Integer> indiceCiudad = new HashMap<>();
+            String ciudadpartida = "";
 
-            for (int i = 0; i < numVertices; i++) {
-                Arrays.fill(grafo[i], INF);
-                String[] partes = lineas.get(i).split(",");
-                String ciudadOrigen = partes[0];
-                String ciudadDestino = partes[1];
-                int tiempoNormal = Integer.parseInt(partes[2]);
-                int tiempoLluvia = Integer.parseInt(partes[3]);
-                int tiempoNieve = Integer.parseInt(partes[4]);
-                int tiempoTormenta = Integer.parseInt(partes[5]);
+            int lad = 1;
 
-                if (!indiceCiudad.containsKey(ciudadOrigen)) {
-                    indiceCiudad.put(ciudadOrigen, indiceCiudad.size());
+            for(String l : lineas){
+
+                String s = l;
+                
+
+                int i = s.indexOf(",");
+
+                if(ciudadpartida.equals(s.substring(0, i).trim()) == false){
+                    lad += 1;
                 }
-                int indiceOrigen = indiceCiudad.get(ciudadOrigen);
 
-                if (!indiceCiudad.containsKey(ciudadDestino)) {
-                    indiceCiudad.put(ciudadDestino, indiceCiudad.size());
+                ciudadpartida = s.substring(0, i).trim();
+            }
+
+            grafonormal = new int[lad][lad];
+            grafolluvia = new int[lad][lad];
+            grafonieve = new int[lad][lad];
+            grafotormenta = new int[lad][lad];
+
+            grafonormal[lad-1][lad-1] = inf;
+            grafolluvia[lad-1][lad-1] = inf;
+            grafonieve[lad-1][lad-1] = inf;
+            grafotormenta[lad-1][lad-1] = inf;
+
+            int x = -1;
+            int z = 0;
+            String cpartida = "";
+
+            for(String l : lineas){
+                
+                String s = l;
+
+                int i = s.indexOf(",");
+
+                if(cpartida.equals(s.substring(0, i).trim()) == false){
+
+                    x += 1;
+                    z = x+1;
+
+                    if(z > lad-1){
+                        z = 0;
+                    }
+                    if(z == x){
+                        z += 1;
+                    }
+
+                } else {
+
+                    z += 1;
+
+                    if(z > lad-1){
+                        z = 0;
+                    }
+                    if(z == x){
+                        z += 1;
+                    }
+
                 }
-                int indiceDestino = indiceCiudad.get(ciudadDestino);
-
-                grafo[indiceOrigen][indiceDestino] = tiempoNormal;
-                grafo[indiceOrigen][indiceDestino] = tiempoLluvia;
-                grafo[indiceOrigen][indiceDestino] = tiempoNieve;
-                grafo[indiceOrigen][indiceDestino] = tiempoTormenta;
+                //Ciudud-partida
+                cpartida = s.substring(0, i).trim();
+                s = s.replaceFirst(s.substring(0, i+1).trim(), "");
+                //Ciudad-destino
+                i = s.indexOf(",");
+                s = s.replaceFirst(s.substring(0, i+1).trim(), "");
+                //Tiempo-normal
+                i = s.indexOf(",");
+                int tnormal = Integer.parseInt(s.substring(0, i).trim());
+                s = s.replaceFirst(s.substring(0, i+1).trim(), "");
+                grafonormal[x][x] = inf;
+                grafonormal[x][z] = tnormal;
+                //Tiempo-lluvia
+                i = s.indexOf(",");
+                int tlluvia = Integer.parseInt(s.substring(0, i).trim());
+                s = s.replaceFirst(s.substring(0, i+1).trim(), "");
+                grafolluvia[x][x] = inf;
+                grafolluvia[x][z] = tlluvia;
+                //Tiempo-nieve
+                i = s.indexOf(",");
+                int tnieve = Integer.parseInt(s.substring(0, i).trim());
+                s = s.replaceFirst(s.substring(0, i+1).trim(), "");
+                grafonieve[x][x] = inf;
+                grafonieve[x][z] = tnieve;
+                //Tiempo-tormenta
+                grafotormenta[x][x] = inf;
+                grafotormenta[x][z] = Integer.parseInt(s);
             }
-            System.out.println("Contenido de la matriz grafo:");
-        for (int i = 0; i < grafo.length; i++) {
-            for (int j = 0; j < grafo.length; j++) {
-                System.out.print(grafo[i][j] + " ");
-            }
-            System.out.println();
-        }
+            
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        switch(a){
+            case 1:{
+                grafo = grafonormal;
+            }
+            case 2:{
+                grafo = grafolluvia;
+            }
+            case 3:{
+                grafo = grafonieve;
+            }
+            case 4:{
+                grafo = grafotormenta;
+            }
         }
         return grafo;
     }
